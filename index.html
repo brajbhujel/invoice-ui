@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html,
+        body {
+            width: 100%;
+            background: #e8e8e8;
+            color: #000;
+            -webkit-font-smoothing: none;
+            font-smoothing: none
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 12px 48px;
+            min-height: 100dvh;
+            font-family: "Courier New", Courier, monospace
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact
+        }
+
+        .toolbar button {
+            appearance: none;
+            border: 1px solid #111;
+            background: #111;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            padding: 10px 18px;
+            cursor: pointer
+        }
+
+        .toolbar button.secondary {
+            background: #fff;
+            color: #111
+        }
+
+        .toolbar button:active {
+            transform: translateY(1px)
+        }
+
+        .receipt {
+            width: 80mm;
+            max-width: 80mm;
+            background: #fff;
+            padding: 4mm 3.5mm 6mm;
+            color: #000;
+            font-size: 11px;
+            line-height: 1.35;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .12)
+        }
+
+        .center {
+            text-align: center
+        }
+
+        .left {
+            text-align: left
+        }
+
+        .right {
+            text-align: right
+        }
+
+        .bold {
+            font-weight: 700
+        }
+
+        .muted {
+            opacity: .85
+        }
+
+        .store-name {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 2px
+        }
+
+        .store-tag {
+            font-size: 10px;
+            margin-bottom: 4px
+        }
+
+        .store-meta {
+            font-size: 10px;
+            line-height: 1.4
+        }
+
+        .logo {
+            display: block;
+            max-width: 36mm;
+            max-height: 18mm;
+            margin: 0 auto 3mm;
+            object-fit: contain
+        }
+
+        .rule {
+            border: 0;
+            border-top: 1px solid #000;
+            margin: 3mm 0
+        }
+
+        .rule-dashed {
+            border: 0;
+            border-top: 1px dashed #000;
+            margin: 2.5mm 0
+        }
+
+        .rule-double {
+            border: 0;
+            border-top: 3px double #000;
+            margin: 3mm 0
+        }
+
+        .meta {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10.5px
+        }
+
+        .meta td {
+            vertical-align: top;
+            padding: 1px 0
+        }
+
+        .meta td:last-child {
+            text-align: right;
+            padding-left: 4px
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin: 1mm 0 1.5mm
+        }
+
+        .items {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed
+        }
+
+        .items thead th {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 0 0 1.5mm;
+            border-bottom: 1px solid #000;
+            vertical-align: bottom
+        }
+
+        .items tbody td {
+            padding: 1.6mm 0;
+            vertical-align: top;
+            font-size: 10.5px
+        }
+
+        .items .col-name {
+            width: 46%;
+            text-align: left;
+            padding-right: 2mm;
+            word-break: break-word
+        }
+
+        .items .col-qty {
+            width: 12%;
+            text-align: center
+        }
+
+        .items .col-price {
+            width: 20%;
+            text-align: right
+        }
+
+        .items .col-amt {
+            width: 22%;
+            text-align: right
+        }
+
+        .item-name {
+            font-weight: 700;
+            display: block
+        }
+
+        .item-sku {
+            font-size: 9px;
+            opacity: .8;
+            display: block;
+            margin-top: 0.5mm
+        }
+
+        .totals {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1mm
+        }
+
+        .totals td {
+            padding: 1px 0;
+            font-size: 11px;
+            vertical-align: top
+        }
+
+        .totals td:last-child {
+            text-align: right;
+            padding-left: 4px;
+            white-space: nowrap
+        }
+
+        .totals .grand td {
+            font-size: 14px;
+            font-weight: 700;
+            padding-top: 2mm
+        }
+
+        .pay {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10.5px
+        }
+
+        .pay td {
+            padding: 1px 0;
+            vertical-align: top
+        }
+
+        .pay td:last-child {
+            text-align: right;
+            padding-left: 4px
+        }
+
+        .barcode {
+            display: block;
+            margin: 3mm auto 1mm;
+            height: 14mm;
+            max-width: 100%;
+            image-rendering: pixelated
+        }
+
+        .qr {
+            display: block;
+            margin: 2mm auto;
+            width: 22mm;
+            height: 22mm;
+            image-rendering: pixelated
+        }
+
+        .footer-note {
+            font-size: 9.5px;
+            line-height: 1.4;
+            margin-top: 1mm
+        }
+
+        .thanks {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            margin-bottom: 1.5mm
+        }
+
+        .cut {
+            height: 0;
+            margin: 4mm 0 0;
+            border: 0;
+            border-top: 1px dashed #999
+        }
+
+        @media print {
+            @page {
+                size: 80mm auto;
+                margin: 0
+            }
+
+            html,
+            body {
+                width: 80mm;
+                max-width: 80mm;
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact
+            }
+
+            body {
+                display: block;
+                min-height: 0
+            }
+
+            .toolbar,
+            .no-print,
+            .cut {
+                display: none !important
+            }
+
+            .receipt {
+                width: 80mm;
+                max-width: 80mm;
+                margin: 0;
+                padding: 3mm 3mm 8mm;
+                box-shadow: none;
+                page-break-after: avoid;
+                page-break-inside: avoid
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="toolbar no-print">
+        <button type="button" onclick="window.print()">Print</button>
+        <button type="button" class="secondary" onclick="window.close()">Close</button>
+    </div>
+    <article class="receipt" id="invoice" role="document" aria-label="Invoice">
+        <header class="center">
+            <img class="logo" id="store-logo"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='48' viewBox='0 0 180 48'%3E%3Crect width='180' height='48' fill='%23000'/%3E%3Ctext x='90' y='31' text-anchor='middle' font-family='Courier New,monospace' font-size='18' font-weight='700' fill='%23fff'%3ESTORE%3C/text%3E%3C/svg%3E"
+                alt="" width="140" height="38">
+            <div class="store-name" id="store-name">ACME RETAIL CO.</div>
+            <div class="store-tag" id="store-tag">Quality Goods Since 2012</div>
+            <div class="store-meta" id="store-address">221B Market Street, Suite 4<br>Kathmandu, NP 44600</div>
+            <div class="store-meta" id="store-contact">Tel: +977-1-555-0148<br>Email: sales@acmeretail.example</div>
+            <div class="store-meta bold" id="store-tax">VAT/TIN: 123-456-789</div>
+        </header>
+        <hr class="rule-double">
+        <table class="meta" aria-label="Invoice details">
+            <tbody>
+                <tr>
+                    <td class="bold">INVOICE</td>
+                    <td class="bold" id="invoice-number">#INV-20261012-0042</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td id="invoice-date">12 Oct 2026</td>
+                </tr>
+                <tr>
+                    <td>Time</td>
+                    <td id="invoice-time">20:05:18</td>
+                </tr>
+                <tr>
+                    <td>Cashier</td>
+                    <td id="cashier-name">B. Sharma</td>
+                </tr>
+                <tr>
+                    <td>Counter</td>
+                    <td id="counter-id">POS-03</td>
+                </tr>
+                <tr>
+                    <td>Order</td>
+                    <td id="order-number">ORD-88421</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="rule-dashed">
+        <div class="section-title">Bill To</div>
+        <div class="left" id="customer-block">
+            <div class="bold" id="customer-name">Walk-in Customer</div>
+            <div class="store-meta" id="customer-phone">+977-98-0000-0000</div>
+            <div class="store-meta" id="customer-address">N/A</div>
+        </div>
+        <hr class="rule">
+        <table class="items" aria-label="Line items">
+            <thead>
+                <tr>
+                    <th class="col-name">Item</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-price">Price</th>
+                    <th class="col-amt">Amt</th>
+                </tr>
+            </thead>
+            <tbody id="items-body">
+                <tr>
+                    <td class="col-name"><span class="item-name">Ceramic Mug 350ml</span><span class="item-sku">SKU:
+                            MUG-350-WHT</span></td>
+                    <td class="col-qty">2</td>
+                    <td class="col-price">450.00</td>
+                    <td class="col-amt">900.00</td>
+                </tr>
+                <tr>
+                    <td class="col-name"><span class="item-name">Notebook A5 Ruled</span><span class="item-sku">SKU:
+                            NB-A5-80</span></td>
+                    <td class="col-qty">1</td>
+                    <td class="col-price">280.00</td>
+                    <td class="col-amt">280.00</td>
+                </tr>
+                <tr>
+                    <td class="col-name"><span class="item-name">Ballpoint Pen Black</span><span class="item-sku">SKU:
+                            PEN-BP-BLK</span></td>
+                    <td class="col-qty">3</td>
+                    <td class="col-price">45.00</td>
+                    <td class="col-amt">135.00</td>
+                </tr>
+                <tr>
+                    <td class="col-name"><span class="item-name">Gift Wrap Paper Roll</span><span class="item-sku">SKU:
+                            WRAP-R12</span></td>
+                    <td class="col-qty">1</td>
+                    <td class="col-price">120.00</td>
+                    <td class="col-amt">120.00</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="rule">
+        <table class="totals" aria-label="Totals">
+            <tbody>
+                <tr>
+                    <td>Items</td>
+                    <td id="items-count">7</td>
+                </tr>
+                <tr>
+                    <td>Subtotal</td>
+                    <td id="subtotal">1,435.00</td>
+                </tr>
+                <tr>
+                    <td>Discount <span id="discount-label">(5%)</span></td>
+                    <td id="discount">-71.75</td>
+                </tr>
+                <tr>
+                    <td>Taxable</td>
+                    <td id="taxable">1,363.25</td>
+                </tr>
+                <tr>
+                    <td>VAT <span id="tax-label">(13%)</span></td>
+                    <td id="tax">177.22</td>
+                </tr>
+                <tr>
+                    <td>Service</td>
+                    <td id="service-charge">0.00</td>
+                </tr>
+                <tr class="grand">
+                    <td>TOTAL</td>
+                    <td id="total">NPR 1,540.47</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="rule-dashed">
+        <div class="section-title">Payment</div>
+        <table class="pay" aria-label="Payment">
+            <tbody>
+                <tr>
+                    <td>Method</td>
+                    <td class="bold" id="payment-method">Cash</td>
+                </tr>
+                <tr>
+                    <td>Paid</td>
+                    <td id="amount-paid">1,600.00</td>
+                </tr>
+                <tr>
+                    <td>Change</td>
+                    <td id="amount-change">59.53</td>
+                </tr>
+                <tr>
+                    <td>Reference</td>
+                    <td id="payment-ref">—</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="rule-double">
+        <div class="center">
+            <svg class="barcode" id="barcode" viewBox="0 0 240 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                role="img">
+                <rect width="240" height="48" fill="#fff" />
+                <g fill="#000">
+                    <rect x="4" y="4" width="2" height="32" />
+                    <rect x="8" y="4" width="1" height="32" />
+                    <rect x="11" y="4" width="3" height="32" />
+                    <rect x="16" y="4" width="1" height="32" />
+                    <rect x="19" y="4" width="2" height="32" />
+                    <rect x="23" y="4" width="1" height="32" />
+                    <rect x="26" y="4" width="3" height="32" />
+                    <rect x="31" y="4" width="2" height="32" />
+                    <rect x="35" y="4" width="1" height="32" />
+                    <rect x="38" y="4" width="2" height="32" />
+                    <rect x="42" y="4" width="3" height="32" />
+                    <rect x="47" y="4" width="1" height="32" />
+                    <rect x="50" y="4" width="2" height="32" />
+                    <rect x="54" y="4" width="1" height="32" />
+                    <rect x="57" y="4" width="3" height="32" />
+                    <rect x="62" y="4" width="2" height="32" />
+                    <rect x="66" y="4" width="1" height="32" />
+                    <rect x="69" y="4" width="2" height="32" />
+                    <rect x="73" y="4" width="3" height="32" />
+                    <rect x="78" y="4" width="1" height="32" />
+                    <rect x="81" y="4" width="2" height="32" />
+                    <rect x="85" y="4" width="1" height="32" />
+                    <rect x="88" y="4" width="3" height="32" />
+                    <rect x="93" y="4" width="2" height="32" />
+                    <rect x="97" y="4" width="1" height="32" />
+                    <rect x="100" y="4" width="2" height="32" />
+                    <rect x="104" y="4" width="3" height="32" />
+                    <rect x="109" y="4" width="1" height="32" />
+                    <rect x="112" y="4" width="2" height="32" />
+                    <rect x="116" y="4" width="1" height="32" />
+                    <rect x="119" y="4" width="3" height="32" />
+                    <rect x="124" y="4" width="2" height="32" />
+                    <rect x="128" y="4" width="1" height="32" />
+                    <rect x="131" y="4" width="2" height="32" />
+                    <rect x="135" y="4" width="3" height="32" />
+                    <rect x="140" y="4" width="1" height="32" />
+                    <rect x="143" y="4" width="2" height="32" />
+                    <rect x="147" y="4" width="1" height="32" />
+                    <rect x="150" y="4" width="3" height="32" />
+                    <rect x="155" y="4" width="2" height="32" />
+                    <rect x="159" y="4" width="1" height="32" />
+                    <rect x="162" y="4" width="2" height="32" />
+                    <rect x="166" y="4" width="3" height="32" />
+                    <rect x="171" y="4" width="1" height="32" />
+                    <rect x="174" y="4" width="2" height="32" />
+                    <rect x="178" y="4" width="1" height="32" />
+                    <rect x="181" y="4" width="3" height="32" />
+                    <rect x="186" y="4" width="2" height="32" />
+                    <rect x="190" y="4" width="1" height="32" />
+                    <rect x="193" y="4" width="2" height="32" />
+                    <rect x="197" y="4" width="3" height="32" />
+                    <rect x="202" y="4" width="1" height="32" />
+                    <rect x="205" y="4" width="2" height="32" />
+                    <rect x="209" y="4" width="1" height="32" />
+                    <rect x="212" y="4" width="3" height="32" />
+                    <rect x="217" y="4" width="2" height="32" />
+                    <rect x="221" y="4" width="1" height="32" />
+                    <rect x="224" y="4" width="2" height="32" />
+                    <rect x="228" y="4" width="3" height="32" />
+                    <rect x="233" y="4" width="1" height="32" />
+                    <rect x="236" y="4" width="2" height="32" />
+                </g>
+                <text x="120" y="46" text-anchor="middle" font-family="Courier New,monospace" font-size="8"
+                    fill="#000">INV-20261012-0042</text>
+            </svg>
+            <svg class="qr" id="qr-code" viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                role="img">
+                <rect width="29" height="29" fill="#fff" />
+                <path fill="#000"
+                    d="M2,2h7v7h-7zM3,3v5h5v-5zM4,4h3v3h-3zM20,2h7v7h-7zM21,3v5h5v-5zM22,4h3v3h-3zM2,20h7v7h-7zM3,21v5h5v-5zM4,22h3v3h-3zM11,2h2v2h-2zM14,2h2v1h1v2h-2v-1h-1zM18,3h1v2h-1zM11,5h1v2h2v1h-3zM15,6h2v2h-2zM11,9h2v2h-2zM14,9h3v1h-1v1h-2zM18,9h1v2h-1zM4,11h2v1h1v1h-3zM8,11h2v2h-2zM11,12h1v2h-1zM13,12h1v1h2v1h-3zM17,11h2v2h1v1h-3zM21,11h2v1h1v2h-1v-1h-2zM24,11h3v2h-2v1h-1zM2,14h1v2h2v1h-3zM6,14h2v2h-1v1h-1zM9,15h1v2h-1zM11,15h2v1h1v2h-3zM15,14h1v1h2v2h-1v-1h-2zM19,15h2v2h-2zM22,15h1v1h2v1h-1v1h-2zM26,14h1v3h-1zM11,18h1v1h2v1h-3zM15,18h2v2h-2zM18,18h1v1h2v2h-3zM22,19h2v2h-2zM25,18h2v1h-1v2h-1zM9,20h1v2h1v1h-2zM12,21h2v2h-2zM15,21h1v1h2v2h-3zM19,21h1v2h2v1h-3zM23,22h1v1h2v2h-3zM27,21h1v3h-1zM9,24h2v2h-2zM12,25h1v2h2v-1h-1v-1zM16,24h1v2h2v1h-3zM20,24h2v1h1v2h-3zM24,25h3v2h-3z" />
+            </svg>
+            <div class="store-meta bold" id="invoice-code">INV-20261012-0042</div>
+        </div>
+        <hr class="rule-dashed">
+        <footer class="center">
+            <div class="thanks" id="thanks-text">Thank you for shopping!</div>
+            <div class="footer-note" id="footer-note">Goods once sold are exchangeable within 7 days with original
+                invoice. Keep this receipt for your records.</div>
+            <div class="footer-note muted" id="footer-extra">www.acmeretail.example</div>
+        </footer>
+    </article>
+    <hr class="cut no-print">
+</body>
+
+</html>
