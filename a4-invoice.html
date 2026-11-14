@@ -57,40 +57,41 @@ body{
 .sheet{
   width:210mm;
   min-height:297mm;
-  max-height:297mm;
+  height:297mm;
   margin:16px auto 32px;
-  padding:14mm 16mm 12mm;
+  padding:11mm 14mm 9mm;
   background:var(--paper);
   box-shadow:0 12px 40px rgba(0,0,0,.1);
   display:flex;
   flex-direction:column;
-  overflow:hidden;
+  overflow:visible;
   print-color-adjust:exact;
   -webkit-print-color-adjust:exact;
 }
 .header{
   display:grid;
   grid-template-columns:1.2fr 1fr;
-  gap:18px;
+  gap:14px;
   align-items:start;
-  padding-bottom:12px;
+  padding-bottom:8px;
   border-bottom:2px solid var(--accent);
+  flex-shrink:0;
 }
 .brand-mark{
   display:flex;
   align-items:center;
-  gap:12px;
-  margin-bottom:8px;
+  gap:10px;
+  margin-bottom:6px;
 }
 .logo{
-  width:42px;
-  height:42px;
+  width:36px;
+  height:36px;
   object-fit:contain;
   flex-shrink:0;
 }
 .brand-name{
   font-family:"Cormorant Garamond",Georgia,serif;
-  font-size:28px;
+  font-size:24px;
   font-weight:700;
   line-height:1;
   letter-spacing:-.02em;
@@ -111,22 +112,22 @@ body{
 .invoice-panel{text-align:right}
 .invoice-title{
   font-family:"Cormorant Garamond",Georgia,serif;
-  font-size:34px;
+  font-size:28px;
   font-weight:700;
   line-height:1;
   letter-spacing:-.02em;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 .badge{
   display:inline-block;
   background:var(--accent-soft);
   color:var(--accent);
-  font-size:10px;
+  font-size:9.5px;
   font-weight:700;
   letter-spacing:.08em;
   text-transform:uppercase;
-  padding:4px 8px;
-  margin-bottom:10px;
+  padding:3px 7px;
+  margin-bottom:6px;
 }
 .meta-table{
   width:100%;
@@ -139,8 +140,9 @@ body{
 .parties{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:16px;
-  margin:14px 0 12px;
+  gap:14px;
+  margin:10px 0 8px;
+  flex-shrink:0;
 }
 .label{
   font-size:9.5px;
@@ -158,8 +160,9 @@ body{
   gap:10px;
   background:var(--soft);
   border:1px solid var(--line);
-  padding:8px 12px;
-  margin-bottom:12px;
+  padding:6px 10px;
+  margin-bottom:8px;
+  flex-shrink:0;
 }
 .event-bar .k{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .event-bar .v{font-size:11.5px;font-weight:600;margin-top:2px}
@@ -171,21 +174,21 @@ body{
 .items thead th{
   background:var(--accent);
   color:#fff;
-  font-size:9.5px;
+  font-size:9px;
   font-weight:700;
   letter-spacing:.08em;
   text-transform:uppercase;
-  padding:8px 8px;
+  padding:6px 7px;
   text-align:left;
   border:0;
 }
 .items thead th.r{text-align:right}
 .items thead th.c{text-align:center}
 .items tbody td{
-  padding:7px 8px;
+  padding:5px 7px;
   border-bottom:1px solid var(--line);
   vertical-align:top;
-  font-size:11px;
+  font-size:10.5px;
 }
 .items tbody tr:nth-child(even) td{background:#faf9f7}
 .items .col-no{width:6%}
@@ -202,22 +205,23 @@ body{
 .lower{
   display:grid;
   grid-template-columns:1.15fr .85fr;
-  gap:18px;
-  margin-top:12px;
+  gap:14px;
+  margin-top:8px;
   align-items:start;
+  flex-shrink:0;
 }
 .notes-block{
   border:1px solid var(--line);
-  padding:10px 12px;
+  padding:8px 10px;
   background:#fff;
 }
-.notes-block p{color:var(--muted);font-size:10.5px;margin-top:4px}
+.notes-block p{color:var(--muted);font-size:10px;margin-top:3px}
 .bank{
-  margin-top:10px;
+  margin-top:8px;
   border-top:1px dashed var(--line);
-  padding-top:8px;
+  padding-top:6px;
 }
-.bank-row{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;padding:1px 0}
+.bank-row{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:1px 0}
 .bank-row span:first-child{color:var(--muted)}
 .bank-row span:last-child{font-weight:600;text-align:right}
 .totals{
@@ -226,8 +230,8 @@ body{
   border:1px solid var(--line);
 }
 .totals td{
-  padding:6px 10px;
-  font-size:11.5px;
+  padding:4px 8px;
+  font-size:11px;
   border-bottom:1px solid var(--line);
 }
 .totals td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
@@ -236,63 +240,64 @@ body{
 .totals .grand td{
   background:var(--accent);
   color:#fff;
-  font-size:14px;
+  font-size:13px;
   font-weight:700;
-  padding:10px;
+  padding:7px 8px;
 }
 .signatures{
   margin-top:auto;
-  padding-top:18px;
+  padding-top:10px;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:18px;
+  gap:14px;
+  flex-shrink:0;
 }
 .sig{
   text-align:center;
-  min-height:78px;
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
 }
 .sig-line{
-  height:42px;
+  height:36px;
   border-bottom:1px solid var(--ink);
-  margin-bottom:6px;
+  margin-bottom:5px;
   display:flex;
   align-items:flex-end;
   justify-content:center;
   position:relative;
 }
 .stamp{
-  width:54px;
-  height:54px;
-  border:2px solid var(--accent);
+  width:42px;
+  height:42px;
+  border:1.5px solid var(--accent);
   border-radius:50%;
   color:var(--accent);
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
-  font-size:7.5px;
+  font-size:6.5px;
   font-weight:700;
-  letter-spacing:.04em;
+  letter-spacing:.03em;
   text-transform:uppercase;
-  line-height:1.15;
+  line-height:1.1;
   opacity:.85;
   transform:rotate(-8deg);
-  margin-bottom:2px;
+  margin-bottom:1px;
 }
-.sig-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.sig-sub{font-size:9.5px;color:var(--muted);margin-top:2px}
+.sig-label{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.sig-sub{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.2}
 .footer{
-  margin-top:12px;
-  padding-top:8px;
+  margin-top:8px;
+  padding-top:6px;
   border-top:1px solid var(--line);
   display:flex;
   justify-content:space-between;
   gap:12px;
   color:var(--muted);
-  font-size:9.5px;
+  font-size:9px;
+  flex-shrink:0;
 }
 @media print{
   @page{size:A4 portrait;margin:0}
@@ -302,16 +307,15 @@ body{
     width:210mm;
     height:297mm;
     min-height:297mm;
-    max-height:297mm;
     margin:0;
     box-shadow:none;
     page-break-after:avoid;
     page-break-inside:avoid;
-    overflow:hidden;
+    overflow:visible;
   }
 }
 @media screen and (max-width:860px){
-  .sheet{width:100%;min-height:auto;max-height:none;margin:12px;padding:18px}
+  .sheet{width:100%;min-height:auto;height:auto;margin:12px;padding:18px}
   .header,.parties,.event-bar,.lower,.signatures{grid-template-columns:1fr}
   .invoice-panel{text-align:left}
   .items{display:block;overflow-x:auto}
