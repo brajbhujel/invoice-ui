@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#161616;
+  --muted:#5a5a5a;
+  --line:#d8d4ce;
+  --soft:#f4f1ec;
+  --accent:#1e3a2f;
+  --accent-soft:#e8efe9;
+  --paper:#ffffff;
+  --screen:#e6e2db;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--screen)}
+body{
+  font-family:"Source Sans 3",ui-sans-serif,system-ui,sans-serif;
+  color:var(--ink);
+  font-size:11.5px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.toolbar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding:18px 12px 0;
+}
+.toolbar button,
+.toolbar a{
+  appearance:none;
+  border:1px solid var(--ink);
+  background:var(--ink);
+  color:#fff;
+  font-family:inherit;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:10px 18px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+  line-height:1.2;
+}
+.toolbar button.secondary,
+.toolbar a.secondary{background:#fff;color:var(--ink)}
+.toolbar button:active,
+.toolbar a:active{transform:translateY(1px)}
+.sheet{
+  width:210mm;
+  min-height:297mm;
+  max-height:297mm;
+  margin:16px auto 32px;
+  padding:14mm 16mm 12mm;
+  background:var(--paper);
+  box-shadow:0 12px 40px rgba(0,0,0,.1);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  print-color-adjust:exact;
+  -webkit-print-color-adjust:exact;
+}
+.header{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:18px;
+  align-items:start;
+  padding-bottom:12px;
+  border-bottom:2px solid var(--accent);
+}
+.brand-mark{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+.logo{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  flex-shrink:0;
+}
+.brand-name{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:28px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.02em;
+  color:var(--accent);
+}
+.brand-sub{
+  font-size:10.5px;
+  color:var(--muted);
+  margin-top:2px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.company-meta{
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.5;
+}
+.invoice-panel{text-align:right}
+.invoice-title{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:34px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.02em;
+  margin-bottom:8px;
+}
+.badge{
+  display:inline-block;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:4px 8px;
+  margin-bottom:10px;
+}
+.meta-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+.meta-table td{padding:2px 0;vertical-align:top}
+.meta-table td:first-child{color:var(--muted);text-align:left;width:42%}
+.meta-table td:last-child{text-align:right;font-weight:600}
+.parties{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+  margin:14px 0 12px;
+}
+.label{
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.party-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.party-body{color:var(--muted);font-size:10.5px;line-height:1.5}
+.event-bar{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  padding:8px 12px;
+  margin-bottom:12px;
+}
+.event-bar .k{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.event-bar .v{font-size:11.5px;font-weight:600;margin-top:2px}
+.items{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+.items thead th{
+  background:var(--accent);
+  color:#fff;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:8px 8px;
+  text-align:left;
+  border:0;
+}
+.items thead th.r{text-align:right}
+.items thead th.c{text-align:center}
+.items tbody td{
+  padding:7px 8px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+  font-size:11px;
+}
+.items tbody tr:nth-child(even) td{background:#faf9f7}
+.items .col-no{width:6%}
+.items .col-desc{width:38%}
+.items .col-qty{width:8%}
+.items .col-unit{width:12%}
+.items .col-disc{width:10%}
+.items .col-amt{width:14%}
+.items .item-name{font-weight:600;display:block}
+.items .item-note{display:block;color:var(--muted);font-size:10px;margin-top:1px}
+.r{text-align:right}
+.c{text-align:center}
+.nums{font-variant-numeric:tabular-nums}
+.lower{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:18px;
+  margin-top:12px;
+  align-items:start;
+}
+.notes-block{
+  border:1px solid var(--line);
+  padding:10px 12px;
+  background:#fff;
+}
+.notes-block p{color:var(--muted);font-size:10.5px;margin-top:4px}
+.bank{
+  margin-top:10px;
+  border-top:1px dashed var(--line);
+  padding-top:8px;
+}
+.bank-row{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;padding:1px 0}
+.bank-row span:first-child{color:var(--muted)}
+.bank-row span:last-child{font-weight:600;text-align:right}
+.totals{
+  width:100%;
+  border-collapse:collapse;
+  border:1px solid var(--line);
+}
+.totals td{
+  padding:6px 10px;
+  font-size:11.5px;
+  border-bottom:1px solid var(--line);
+}
+.totals td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.totals tr:last-child td{border-bottom:0}
+.totals .soft td{background:var(--soft);color:var(--muted);font-weight:500}
+.totals .grand td{
+  background:var(--accent);
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  padding:10px;
+}
+.signatures{
+  margin-top:auto;
+  padding-top:18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.sig{
+  text-align:center;
+  min-height:78px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.sig-line{
+  height:42px;
+  border-bottom:1px solid var(--ink);
+  margin-bottom:6px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  position:relative;
+}
+.stamp{
+  width:54px;
+  height:54px;
+  border:2px solid var(--accent);
+  border-radius:50%;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:7.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  line-height:1.15;
+  opacity:.85;
+  transform:rotate(-8deg);
+  margin-bottom:2px;
+}
+.sig-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.sig-sub{font-size:9.5px;color:var(--muted);margin-top:2px}
+.footer{
+  margin-top:12px;
+  padding-top:8px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--muted);
+  font-size:9.5px;
+}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{background:#fff;margin:0;padding:0;width:210mm;height:297mm}
+  .toolbar,.no-print{display:none!important}
+  .sheet{
+    width:210mm;
+    height:297mm;
+    min-height:297mm;
+    max-height:297mm;
+    margin:0;
+    box-shadow:none;
+    page-break-after:avoid;
+    page-break-inside:avoid;
+    overflow:hidden;
+  }
+}
+@media screen and (max-width:860px){
+  .sheet{width:100%;min-height:auto;max-height:none;margin:12px;padding:18px}
+  .header,.parties,.event-bar,.lower,.signatures{grid-template-columns:1fr}
+  .invoice-panel{text-align:left}
+  .items{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div class="toolbar no-print">
+<a href="index.html" class="secondary">80mm Receipt</a>
+<a href="a4-invoice.html">A4 Invoice</a>
+<button type="button" onclick="window.print()">Print / PDF</button>
+<button type="button" class="secondary" onclick="window.close()">Close</button>
+</div>
+<article class="sheet" id="invoice" role="document" aria-label="A4 Restaurant Invoice">
+<header class="header">
+<div>
+<div class="brand-mark">
+<img class="logo" id="store-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Crect width='84' height='84' rx='8' fill='%231e3a2f'/%3E%3Cpath d='M22 54V30h6c6 0 10 3.5 10 9s-4 9-10 9h-2v6h-4zm4-10h2c3.2 0 5.2-1.6 5.2-4.2S31.2 35.5 28 35.5h-2V44zm20 10l8-24h5l8 24h-4.3l-1.5-4.8H51.8L50.3 54H46zm8.2-8.5h6.6L57.5 36l-3.3 9.5zM68 54V30h4v24h-4z' fill='%23fff'/%3E%3C/svg%3E" alt="" width="42" height="42">
+<div>
+<div class="brand-name" id="store-name">Maison Verde</div>
+<div class="brand-sub" id="store-tag">Restaurant &amp; Corporate Catering</div>
+</div>
+</div>
+<div class="company-meta" id="store-address">14 Heritage Lane, Lazimpat<br>Kathmandu 44600, Nepal</div>
+<div class="company-meta" id="store-contact">+977-1-444-2088 · accounts@maisonverde.example</div>
+<div class="company-meta bold" id="store-tax" style="font-weight:600;color:var(--ink);margin-top:4px">PAN/VAT: 601234567</div>
+</div>
+<div class="invoice-panel">
+<div class="invoice-title">Invoice</div>
+<div class="badge" id="invoice-status">Due on Receipt</div>
+<table class="meta-table" aria-label="Invoice meta">
+<tbody>
+<tr><td>Invoice No.</td><td id="invoice-number">INV-MV-2026-1184</td></tr>
+<tr><td>Issue Date</td><td id="invoice-date">12 Oct 2026</td></tr>
+<tr><td>Due Date</td><td id="due-date">19 Oct 2026</td></tr>
+<tr><td>PO / Ref</td><td id="po-number">PO-HTL-4421</td></tr>
+<tr><td>Currency</td><td id="currency">NPR</td></tr>
+</tbody>
+</table>
+</div>
+</header>
+
+<section class="parties" aria-label="Parties">
+<div>
+<div class="label">Bill To</div>
+<div class="party-name" id="client-name">Himalayan Tech Ltd.</div>
+<div class="party-body" id="client-address">Finance Department<br>Level 7, Trade Tower<br>Thapathali, Kathmandu</div>
+<div class="party-body" id="client-tax" style="margin-top:4px;font-weight:600;color:var(--ink)">VAT: 301987654</div>
+</div>
+<div>
+<div class="label">Contact</div>
+<div class="party-name" id="client-contact">Priya Adhikari</div>
+<div class="party-body" id="client-email">finance@himalayantech.example</div>
+<div class="party-body" id="client-phone">+977-98-1122-3344</div>
+</div>
+<div>
+<div class="label">Payment Terms</div>
+<div class="party-name" id="payment-terms">Net 7 Days</div>
+<div class="party-body" id="payment-methods">Bank transfer · Cheque · Corporate card</div>
+<div class="party-body" id="payment-note">Late fee 1.5% after due date</div>
+</div>
+</section>
+
+<section class="event-bar" aria-label="Service details">
+<div>
+<div class="k">Service / Event</div>
+<div class="v" id="event-name">Board Lunch Catering</div>
+</div>
+<div>
+<div class="k">Event Date</div>
+<div class="v" id="event-date">15 Oct 2026</div>
+</div>
+<div>
+<div class="k">Guests</div>
+<div class="v" id="guest-count">48 Pax</div>
+</div>
+<div>
+<div class="k">Venue</div>
+<div class="v" id="event-venue">Client HQ, Floor 7</div>
+</div>
+</section>
+
+<table class="items nums" aria-label="Line items">
+<thead>
+<tr>
+<th class="col-no c">#</th>
+<th class="col-desc">Description</th>
+<th class="col-qty c">Qty</th>
+<th class="col-unit r">Unit Price</th>
+<th class="col-disc c">Disc.</th>
+<th class="col-unit r">Taxable</th>
+<th class="col-amt r">Amount</th>
+</tr>
+</thead>
+<tbody id="items-body">
+<tr>
+<td class="c">1</td>
+<td><span class="item-name">Executive Set Lunch</span><span class="item-note">Soup, main, dessert · veg &amp; non-veg</span></td>
+<td class="c">48</td>
+<td class="r">1,250.00</td>
+<td class="c">5%</td>
+<td class="r">57,000.00</td>
+<td class="r">57,000.00</td>
+</tr>
+<tr>
+<td class="c">2</td>
+<td><span class="item-name">Welcome Beverage Station</span><span class="item-note">Fresh juice, tea, coffee · 3 hrs</span></td>
+<td class="c">1</td>
+<td class="r">8,500.00</td>
+<td class="c">0%</td>
+<td class="r">8,500.00</td>
+<td class="r">8,500.00</td>
+</tr>
+<tr>
+<td class="c">3</td>
+<td><span class="item-name">Canapé Platter</span><span class="item-note">Assorted · serves 20</span></td>
+<td class="c">3</td>
+<td class="r">4,200.00</td>
+<td class="c">0%</td>
+<td class="r">12,600.00</td>
+<td class="r">12,600.00</td>
+</tr>
+<tr>
+<td class="c">4</td>
+<td><span class="item-name">Service Staff</span><span class="item-note">Servers &amp; captain · 4 hrs</span></td>
+<td class="c">4</td>
+<td class="r">2,000.00</td>
+<td class="c">0%</td>
+<td class="r">8,000.00</td>
+<td class="r">8,000.00</td>
+</tr>
+<tr>
+<td class="c">5</td>
+<td><span class="item-name">Table Setup &amp; Linens</span><span class="item-note">Cloth, napkin, crockery rental</span></td>
+<td class="c">1</td>
+<td class="r">6,800.00</td>
+<td class="c">10%</td>
+<td class="r">6,120.00</td>
+<td class="r">6,120.00</td>
+</tr>
+<tr>
+<td class="c">6</td>
+<td><span class="item-name">Transport &amp; Logistics</span><span class="item-note">Delivery, setup, pickup</span></td>
+<td class="c">1</td>
+<td class="r">3,500.00</td>
+<td class="c">0%</td>
+<td class="r">3,500.00</td>
+<td class="r">3,500.00</td>
+</tr>
+</tbody>
+</table>
+
+<section class="lower">
+<div>
+<div class="notes-block">
+<div class="label">Notes</div>
+<p id="notes-text">Menu confirmed per catering agreement CA-2026-091. Allergies noted for 2 guests. Leftover packaging included. This invoice is for corporate catering services rendered.</p>
+<div class="bank">
+<div class="label" style="margin-bottom:6px">Bank Details</div>
+<div class="bank-row"><span>Bank</span><span id="bank-name">Nabil Bank Ltd.</span></div>
+<div class="bank-row"><span>Account Name</span><span id="bank-account-name">Maison Verde Pvt. Ltd.</span></div>
+<div class="bank-row"><span>Account No.</span><span id="bank-account-no">0123456789012345</span></div>
+<div class="bank-row"><span>Branch</span><span id="bank-branch">Lazimpat</span></div>
+</div>
+</div>
+</div>
+<table class="totals nums" aria-label="Totals">
+<tbody>
+<tr class="soft"><td>Subtotal</td><td id="subtotal">99,400.00</td></tr>
+<tr><td>Line Discount</td><td id="discount">-3,680.00</td></tr>
+<tr><td>Taxable Amount</td><td id="taxable">95,720.00</td></tr>
+<tr><td>VAT <span id="tax-label">(13%)</span></td><td id="tax">12,443.60</td></tr>
+<tr><td>Service Charge <span id="service-label">(10%)</span></td><td id="service-charge">9,572.00</td></tr>
+<tr><td>Rounding</td><td id="rounding">0.40</td></tr>
+<tr class="grand"><td>Total Due</td><td id="total">NPR 117,736.00</td></tr>
+<tr><td>Amount Paid</td><td id="amount-paid">0.00</td></tr>
+<tr><td>Balance Due</td><td id="balance-due">117,736.00</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="signatures" aria-label="Signatures">
+<div class="sig">
+<div class="sig-line"></div>
+<div class="sig-label" id="sig-prepared-label">Prepared By</div>
+<div class="sig-sub" id="sig-prepared-name">Accounts Desk</div>
+</div>
+<div class="sig">
+<div class="sig-line">
+<div class="stamp" id="company-stamp">Maison Verde<br>Official<br>Seal</div>
+</div>
+<div class="sig-label" id="sig-auth-label">Authorized Signatory</div>
+<div class="sig-sub" id="sig-auth-name">Restaurant Manager</div>
+</div>
+<div class="sig">
+<div class="sig-line"></div>
+<div class="sig-label" id="sig-client-label">Client Acknowledgement</div>
+<div class="sig-sub" id="sig-client-name">Name &amp; Signature</div>
+</div>
+</section>
+
+<footer class="footer">
+<span id="footer-left">Thank you for choosing Maison Verde for your corporate dining.</span>
+<span id="footer-right">Page 1 of 1 · Computer generated invoice</span>
+</footer>
+</article>
+</body>
+</html>
